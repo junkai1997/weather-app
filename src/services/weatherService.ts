@@ -15,6 +15,8 @@ export interface WeatherData {
   windSpeed: number
   feelsLike: number
   pressure: number
+  highestTemp?: number
+  lowestTemp?: number
 }
 
 export interface WeatherApiResponse {
@@ -78,7 +80,9 @@ export const weatherService = {
         humidity: data.main.humidity,
         windSpeed: data.wind.speed,
         feelsLike: Math.round(data.main.feels_like),
-        pressure: data.main.pressure
+        pressure: data.main.pressure,
+        highestTemp: data.main.temp_max ? Math.round(data.main.temp_max) : undefined,
+        lowestTemp: data.main.temp_min ? Math.round(data.main.temp_min) : undefined
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
