@@ -1,9 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ThemeToggle } from './components/ThemeToggle'
 import { Button } from './components/ui/button'
 import { weatherService } from './services/weatherService'
 import type { WeatherData } from './services/weatherService'
 import { useSearchHistory } from './hooks/useSearchHistory'
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { useTheme } from './contexts/ThemeContext'
+import bgLight from './assets/bg-light.png'
+import bgDark from './assets/bg-dark.png'
+import { Loader, Search } from 'lucide-react'
 
 function App() {
   const [city, setCity] = useState('')
@@ -12,6 +17,20 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   
   const { searchHistory, addToHistory, clearHistory } = useSearchHistory()
+  const { theme } = useTheme()
+
+  const backgroundImage = theme === 'light' ? bgLight : bgDark
+
+  // Preload background images for better performance
+  useEffect(() => {
+    const preloadImages = () => {
+      const lightImg = new Image()
+      const darkImg = new Image()
+      lightImg.src = bgLight
+      darkImg.src = bgDark
+    }
+    preloadImages()
+  }, [])
 
   const handleSearch = async (searchCity: string = city) => {
     if (!searchCity.trim()) return
@@ -37,17 +56,23 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto px-4 py-8">
+    <div 
+      className="min-h-screen bg-background text-foreground bg-responsive"
+      style={{
+        backgroundImage: `url(${backgroundImage})`
+      }}
+    >
+      {/* Content wrapper */}
+      <div className="container mx-auto px-4 py-8 max-w-[700px]">
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Weather App</h1>
+          <h1 className="text-3xl font-bold">Today's Weather</h1>
           <ThemeToggle />
         </header>
 
         {/* Search Form */}
         <form onSubmit={handleSubmit} className="mb-8">
-          <div className="flex gap-2 max-w-md">
+          <div className="flex gap-2 w-full">
             <input
               type="text"
               value={city}
@@ -56,16 +81,19 @@ function App() {
               className="flex-1 px-3 py-2 border border-input rounded-md bg-background"
             />
             <Button type="submit" disabled={loading}>
-              {loading ? 'Searching...' : 'Search'}
+              {loading ? <Loader className="animate-spin" /> : <Search />}
             </Button>
           </div>
         </form>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-md">
-            <p className="text-destructive">{error}</p>
-          </div>
+          <Alert variant="destructive" className="mb-4">
+            <AlertTitle>Heads up!</AlertTitle>
+            <AlertDescription>
+              {error}
+            </AlertDescription>
+          </Alert>
         )}
 
         {/* Weather Display */}

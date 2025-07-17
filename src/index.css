@@ -118,3 +118,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Responsive background image styles */
+@layer utilities {
+  .bg-responsive {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+  }
+  
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .bg-responsive {
+      background-size: cover;
+      background-position: center top;
+    }
+  }
+  
+  /* Tablet and desktop */
+  @media (min-width: 769px) {
+    .bg-responsive {
+      background-attachment: fixed;
+    }
+  }
+}
