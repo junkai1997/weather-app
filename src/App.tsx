@@ -5,6 +5,13 @@ import { weatherService } from './services/weatherService'
 import type { WeatherData } from './services/weatherService'
 import { useSearchHistory } from './hooks/useSearchHistory'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import {
   Tooltip,
@@ -18,16 +25,33 @@ import cloudIcon from './assets/cloud.png'
 import sunIcon from './assets/sun.png'
 import { Loader, Search, Trash2 } from 'lucide-react'
 import { formatDateTime } from './utils'
+import { validateLocation } from './utils/locationValidation'
+import { z } from 'zod'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+
+const formSchema = z.object({
+  city: z.string()
+    .min(2, "City name must be at least 2 characters")
+    .max(100, "City name must be less than 100 characters")
+    .refine((value) => validateLocation(value), {
+      message: "Please enter a valid city or country name",
+    }),
+})
 
 function App() {
-  const [city, setCity] = useState('')
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchTimestamp, setSearchTimestamp] = useState<Date | null>(null)
-  
   const { searchHistory, addToHistory, clearHistory, removeFromHistory } = useSearchHistory()
   const { theme } = useTheme()
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      city: "",
+    },
+  })
 
   const backgroundImage = theme === 'light' ? bgLight : bgDark
 
@@ -42,7 +66,7 @@ function App() {
     preloadImages()
   }, [])
 
-  const handleSearch = async (searchCity: string = city) => {
+  const handleSearch = async (searchCity: string) => {
     if (!searchCity.trim()) return
     
     setLoading(true)
@@ -60,9 +84,8 @@ function App() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    handleSearch()
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    handleSearch(values.city)
   }
 
   return (
@@ -81,20 +104,32 @@ function App() {
         </header>
 
         {/* Search Form */}
-        <form onSubmit={handleSubmit} className="mb-20 lg:mb-[110px] shrink-0">
-          <div className="flex gap-5 w-full">
-            <Input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Enter city or country name..."
-              className="flex-1 dark:border-none"
-            />
-            <Button type="submit" disabled={loading} className="h-[40px] lg:h-[60px] has-[>svg]:px-[22px]">
-              {loading ? <Loader className="animate-spin" /> : <Search />}
-            </Button>
-          </div>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mb-20 lg:mb-[110px]">
+            <div className="flex gap-5 w-full">
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem className='flex-1'>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        {...field}
+                        placeholder="Enter city or country name..."
+                        className="dark:border-none"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={loading} className="h-[40px] lg:h-[60px] has-[>svg]:px-[22px]">
+                {loading ? <Loader className="animate-spin" /> : <Search />}
+              </Button>
+            </div>
+          </form>
+        </Form>
 
         {/* Error Message */}
         {error && (
@@ -161,7 +196,7 @@ function App() {
                             size="icon"
                             onClick={() => (
                               handleSearch(item.city),
-                              setCity(item.city)
+                              form.setValue('city', item.city)
                             )}
                             className="h-8"
                           >
