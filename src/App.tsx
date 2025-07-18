@@ -190,7 +190,7 @@ function App() {
                         <p className="text-xs text-muted-foreground">{formatDateTime(new Date(item.timestamp))}</p>
                       </div>
                       <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger asChild>
                           <Button
                             variant={theme === 'light' ? 'secondary' : 'outline'}
                             size="icon"
@@ -208,7 +208,7 @@ function App() {
                         </TooltipContent>
                       </Tooltip>
                       <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger asChild>
                           <Button
                             variant={theme === 'light' ? 'secondary' : 'outline'}
                             size="icon"
