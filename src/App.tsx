@@ -6,6 +6,11 @@ import type { WeatherData } from './services/weatherService'
 import { useSearchHistory } from './hooks/useSearchHistory'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useTheme } from './contexts/ThemeContext'
 import bgLight from './assets/bg-light.png'
 import bgDark from './assets/bg-dark.png'
@@ -138,8 +143,8 @@ function App() {
               <div className="bg-card/60 border rounded-t-3xl p-6 flex-1 flex flex-col min-h-0 mt-4">
                 <div className="flex justify-between items-center mb-4 shrink-0">
                   <h3 className="text-lg font-semibold">Search History</h3>
-                  <Button variant="outline" size="sm" onClick={clearHistory}>
-                    Clear History
+                  <Button variant="outline" size="sm" onClick={clearHistory} className="px-1 lg:px-3">
+                    Clear All History
                   </Button>
                 </div>
                 <div className="flex flex-col overflow-y-auto gap-4 flex-1 min-h-0">
@@ -149,22 +154,36 @@ function App() {
                         <p className="text-sm font-semibold">{item.city}</p>
                         <p className="text-xs text-muted-foreground">{formatDateTime(new Date(item.timestamp))}</p>
                       </div>
-                      <Button
-                        variant={theme === 'light' ? 'secondary' : 'outline'}
-                        size="icon"
-                        onClick={() => handleSearch(item.city)}
-                        className="h-8"
-                      >
-                        {loading ? <Loader className="animate-spin" /> : <Search />}
-                      </Button>
-                      <Button
-                        variant={theme === 'light' ? 'secondary' : 'outline'}
-                        size="icon"
-                        onClick={() => removeFromHistory(item.id)}
-                        className="h-8"
-                      >
-                        {loading ? <Loader className="animate-spin" /> : <Trash2 />}
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Button
+                            variant={theme === 'light' ? 'secondary' : 'outline'}
+                            size="icon"
+                            onClick={() => handleSearch(item.city)}
+                            className="h-8"
+                          >
+                            {loading ? <Loader className="animate-spin" /> : <Search />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Search weather</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Button
+                            variant={theme === 'light' ? 'secondary' : 'outline'}
+                            size="icon"
+                            onClick={() => removeFromHistory(item.id)}
+                            className="h-8"
+                          >
+                            {loading ? <Loader className="animate-spin" /> : <Trash2 />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Remove from history</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   ))}
                 </div>
