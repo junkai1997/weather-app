@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { useTheme } from './contexts/ThemeContext'
 import bgLight from './assets/bg-light.png'
 import bgDark from './assets/bg-dark.png'
+import cloudIcon from './assets/cloud.png'
+import sunIcon from './assets/sun.png'
 import { Loader, Search } from 'lucide-react'
 import { formatDateTime } from './utils'
 
@@ -76,7 +78,7 @@ function App() {
         </header>
 
         {/* Search Form */}
-        <form onSubmit={handleSubmit} className="mb-8">
+        <form onSubmit={handleSubmit} className="mb-20 lg:mb-[110px]">
           <div className="flex gap-5 w-full">
             <Input
               type="text"
@@ -103,7 +105,7 @@ function App() {
 
         {/* Weather Display */}
         {weatherData && (
-          <div className="mb-8 p-6 bg-card border rounded-lg">
+          <div className="mb-8 p-6 bg-card/30 border rounded-lg relative">
             <h2 className="text-md lg:text-2xl font-semibold mb-4">
               {weatherData.name}, {weatherData.country}
             </h2>
@@ -124,29 +126,41 @@ function App() {
                 <p className="text-xs lg:text-sm text-card-foreground/80 capitalize">{weatherData.description}</p>
               </div>
             </div>
+            <div className="absolute -top-20 right-2 lg:-top-28">
+              {weatherData.weatherId === 800 ? (
+                <img src={sunIcon} alt="Clear sky" className="w-[157px] h-[157px] lg:w-[300px] lg:h-[300px]" />
+              ) : (weatherData.weatherId && [801, 802, 803, 804].includes(weatherData.weatherId)) ? (
+                <img src={cloudIcon} alt="Cloudy" className="w-[157px] h-[157px] lg:w-[300px] lg:h-[300px]" />
+              ) : null}
+            </div>
           </div>
         )}
 
         {/* Search History */}
         {searchHistory.length > 0 && (
-          <div className="bg-card border rounded-lg p-6">
+          <div className="bg-card/60 border rounded-lg p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Search History</h3>
               <Button variant="outline" size="sm" onClick={clearHistory}>
                 Clear History
               </Button>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col h-[400px] overflow-y-auto gap-2">
               {searchHistory.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSearch(item.city)}
-                  className="h-8"
-                >
-                  {item.city}
-                </Button>
+                <div  className="bg-card border rounded-lg p-4 flex justify-between lg:justify-start items-center" key={item.id}>
+                  <div className="flex flex-col lg:hidden">
+                    <p className="text-sm font-semibold">{item.city}</p>
+                    <p className="text-xs text-muted-foreground">{formatDateTime(new Date(item.timestamp))}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleSearch(item.city)}
+                    className="h-8"
+                  >
+                    {loading ? <Loader className="animate-spin" /> : <Search />}
+                  </Button>
+                </div>
               ))}
             </div>
           </div>
