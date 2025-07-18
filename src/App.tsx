@@ -159,7 +159,10 @@ function App() {
                           <Button
                             variant={theme === 'light' ? 'secondary' : 'outline'}
                             size="icon"
-                            onClick={() => handleSearch(item.city)}
+                            onClick={() => (
+                              handleSearch(item.city),
+                              setCity(item.city)
+                            )}
                             className="h-8"
                           >
                             {loading ? <Loader className="animate-spin" /> : <Search />}
