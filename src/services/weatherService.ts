@@ -18,6 +18,7 @@ export interface WeatherData {
   highestTemp?: number
   lowestTemp?: number
   weatherId?: number
+  weatherIconUrl?: string
 }
 
 export interface WeatherApiResponse {
@@ -84,7 +85,8 @@ export const weatherService = {
         pressure: data.main.pressure,
         highestTemp: data.main.temp_max ? Math.round(data.main.temp_max) : undefined,
         lowestTemp: data.main.temp_min ? Math.round(data.main.temp_min) : undefined,
-        weatherId: data.weather[0].id
+        weatherId: data.weather[0].id,
+        weatherIconUrl: `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

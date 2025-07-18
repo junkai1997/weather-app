@@ -129,6 +129,8 @@ function App() {
                 <img src={sunIcon} alt="Clear sky" className="w-[157px] h-[157px] lg:w-[300px] lg:h-[300px]" />
               ) : (weatherData.weatherId && [801, 802, 803, 804].includes(weatherData.weatherId)) ? (
                 <img src={cloudIcon} alt="Cloudy" className="w-[157px] h-[157px] lg:w-[300px] lg:h-[300px]" />
+              ) : weatherData.weatherIconUrl ? (
+                <img src={weatherData.weatherIconUrl} alt={weatherData.description} className="w-[157px] h-[157px] lg:w-[300px] lg:h-[300px]" />
               ) : null}
             </div>
             {/* Search History */}
