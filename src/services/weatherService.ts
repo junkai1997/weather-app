@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // Using OpenWeatherMap API - get a free API key
-const API_KEY = 'cf594c7b3298725b4ae0ce50febcd5dc' 
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY
 const BASE_URL = 'https://api.openweathermap.org/data/2.5'
 
 export interface WeatherData {

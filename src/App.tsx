@@ -194,10 +194,10 @@ function App() {
                           <Button
                             variant={theme === 'light' ? 'secondary' : 'outline'}
                             size="icon"
-                            onClick={() => (
-                              handleSearch(item.city),
+                            onClick={() => {
                               form.setValue('city', item.city)
-                            )}
+                              handleSearch(item.city)
+                            }}
                             className="h-8"
                           >
                             {loading ? <Loader className="animate-spin" /> : <Search />}
