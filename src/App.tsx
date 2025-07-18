@@ -140,7 +140,7 @@ function App() {
                     Clear History
                   </Button>
                 </div>
-                <div className="flex flex-col overflow-y-auto gap-2 flex-1 min-h-0">
+                <div className="flex flex-col overflow-y-auto gap-4 flex-1 min-h-0">
                   {searchHistory.map((item) => (
                     <div  className="bg-card rounded-2xl p-4 flex justify-between lg:justify-start items-center gap-2 h-[60px]" key={item.id}>
                       <div className="flex flex-col lg:flex-row lg:items-center w-full lg:justify-between">
